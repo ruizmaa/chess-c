@@ -5,8 +5,9 @@
 int main() {
     // Creacion del tablero
     ChessBoard board;
-    initialize_board(&board);
+    // initialize_board(&board);
 
+    initialize_custom_board(&board);
     // Turno 0
     PieceColor current_turn = WHITE;
 

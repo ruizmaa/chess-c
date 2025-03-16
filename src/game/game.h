@@ -3,8 +3,14 @@
 
 #include "board.h"
 
-void play_turn(ChessBoard* board, PieceColor current_turn);
-int move_piece(ChessBoard* board, int from_row, int from_col, int to_row, int to_col);
+// Registro de piezas comidas
+typedef struct {
+    Piece* captured_pieces[32];
+    int captured_count;
+} GameStatus;
+
+void play_turn(ChessBoard* board, const PieceColor current_turn);
+int move_piece(ChessBoard* board, const int from_row, const int from_col, const int to_row, const int to_col);
 void get_coordinates(const char *input, int *row, int *col);
 void get_user_input(char *input);
 int is_valid_input(const char *input);

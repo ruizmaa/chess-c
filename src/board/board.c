@@ -11,17 +11,21 @@ static const char PIECE_ASCII[6] = { 'P', 'R', 'N', 'B', 'Q', 'K' };
 
 
 void place_piece(ChessBoard* board, int row, int col, PieceType type, PieceColor color) {
-    board->squares[row][col] = malloc(sizeof(Piece));
+
+    if( (board->squares[row][col] = malloc(sizeof(Piece))) == NULL ){
+        fprintf(stderr, "Error: No se pudo asignar memoria para la pieza.\n");
+        return; // Sale de la función si no hay memoria disponible
+    }
     board->squares[row][col]->type = type;
     board->squares[row][col]->color = color;
 }
 
 void initialize_board (ChessBoard* board){
     //CREA EL TABLERO VACIO
-    for (int raw = 0; raw < BOARD_SIZE; raw++)
+    for (int row = 0; row < BOARD_SIZE; row++)
     {
        for (int col = 0; col < BOARD_SIZE; col++){
-            board->squares[raw][col] = NULL;
+            board->squares[row][col] = NULL;
        }
     }
 
@@ -100,14 +104,14 @@ void free_board(ChessBoard* board) {
 
 void initialize_custom_board(ChessBoard* board) {
     const char custom_board[BOARD_SIZE][BOARD_SIZE] = {
-        {'p', '-', 'p', 'p', 'p', 'p', 'p', 'p'},
-        {'r', 'n', 'b', 'q', '-', 'b', 'n', 'r'},
         {'-', '-', '-', '-', '-', '-', '-', '-'},
-        {'-', '-', '-', '-', 'k', '-', '-', '-'},
         {'-', '-', '-', '-', '-', '-', '-', '-'},
-        {'-', 'p', '-', '-', '-', '-', '-', '-'},
-        {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'},
-        {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'}
+        {'-', '-', '-', '-', '-', '-', '-', '-'},
+        {'-', '-', '-', '-', '-', '-', '-', '-'},
+        {'R', '-', '-', '-', '-', '-', '-', '-'},
+        {'-', '-', '-', '-', '-', '-', '-', '-'},
+        {'-', '-', '-', '-', '-', '-', '-', '-'},
+        {'R', '-', 'q', '-', '-', '-', '-', '-'}
     };
 
     // Mapeo pizas
@@ -116,10 +120,10 @@ void initialize_custom_board(ChessBoard* board) {
     };
 
     //CREA EL TABLERO VACIO
-    for (int raw = 0; raw < BOARD_SIZE; raw++)
+    for (int row = 0; row < BOARD_SIZE; row++)
     {
         for (int col = 0; col < BOARD_SIZE; col++){
-            board->squares[raw][col] = NULL;
+            board->squares[row][col] = NULL;
         }
     }
 
