@@ -1,0 +1,10 @@
+{
+    "name": "C Development",
+    "image": "gcc:latest",
+    "extensions": ["ms-vscode.cpptools"],
+    "settings": {
+      "terminal.integrated.defaultProfile.linux": "bash"
+    },
+    "postCreateCommand": "gcc --version"
+  }
+  
