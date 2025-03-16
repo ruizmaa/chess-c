@@ -60,8 +60,7 @@ void initialize_board (ChessBoard* board);
 void initialize_custom_board (ChessBoard* board);
 void print_board(ChessBoard* board, int use_unicode);
 void free_board(ChessBoard* board);
-
-
-
+void print_piece(Piece *p, int use_unicode);
+void print_captured_pieces(ChessBoard* board, int use_unicode);
 
 #endif

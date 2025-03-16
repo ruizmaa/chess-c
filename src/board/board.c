@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "board.h"
 
+//TOD: revisar que parametros son const
+
 static const char* PIECE_UNICODE[2][6] = {
     { "♙", "♖", "♘", "♗", "♕", "♔" }, // Blancas
     { "♟", "♜", "♞", "♝", "♛", "♚" }  // Negras
@@ -73,65 +75,6 @@ void initialize_board (ChessBoard* board){
     place_piece(board, 0, 4, KING, BLACK);  // Rey negro (fila 0, columna 4)
 }
 
-void print_board(ChessBoard* board, int use_unicode) {
-    printf("\n   a  b  c  d  e  f  g  h\n");
-    
-    for (int row = 0; row < BOARD_SIZE; row++) {
-
-        // Printeo del tablero
-        printf("%d ", 8 - row);
-        for (int col = 0; col < BOARD_SIZE; col++) {
-            // Alternar colores de fondo según la casilla
-            char *bg_color = ((row + col) % 2 == 0) ? BG_LIGHT : BG_DARK;
-            
-            if (board->squares[row][col] != NULL) {
-                Piece *p = board->squares[row][col];
-                char *text_color = (p->color == WHITE) ? WHITE_COLOR : BLACK_COLOR;
-                
-                if (use_unicode) {
-                    // Usa los símbolos Unicode
-                    printf("%s%s %s " RESET, bg_color, text_color, PIECE_UNICODE[p->color][p->type]);
-                } else {
-                    // Usa los caracteres ASCII
-                    printf("%s%s %c " RESET, bg_color, text_color, PIECE_ASCII[p->type]);
-                }
-            } else {
-                printf("%s   " RESET, bg_color); // Casilla vacía con fondo alterno
-            }
-        }
-
-        // Printeo de piezas capturadas
-        if ((BOARD_SIZE - row - 1) < board->status.captured_count) {
-            Piece *captured_piece = board->status.captured_pieces[BOARD_SIZE - row - 1];
-            char *text_color = (captured_piece->color == WHITE) ? WHITE_COLOR : BLACK_COLOR;
-            
-            // Piezas negras capturadas (colocarlas junto a las blancas)
-            if (captured_piece->color == BLACK) {
-                if (use_unicode) {
-                    printf("   %s%s " RESET, text_color, PIECE_UNICODE[captured_piece->color][captured_piece->type]);
-                } else {
-                    printf("   %s%c " RESET, text_color, PIECE_ASCII[captured_piece->type]);
-                }
-            }
-        }
-        if (row < board->status.captured_count) {
-            Piece *captured_piece = board->status.captured_pieces[row];
-            char *text_color = (captured_piece->color == WHITE) ? WHITE_COLOR : BLACK_COLOR;
-
-            // Piezas blancas capturadas (colocarlas junto a las negras)
-            if (captured_piece->color == WHITE) {
-                if (use_unicode) {
-                    printf("   %s%s " RESET, text_color, PIECE_UNICODE[captured_piece->color][captured_piece->type]);
-                } else {
-                    printf("   %s%c " RESET, text_color, PIECE_ASCII[captured_piece->type]);
-                }
-            }
-        }
-
-        printf("\n");
-    }
-}
-
 void free_board(ChessBoard* board) {
     if (!board) return;
 
@@ -162,6 +105,22 @@ void free_board(ChessBoard* board) {
 void initialize_custom_board(ChessBoard* board) {
     // INICIALIZA GAME STATUS
     initialize_game_status(board);
+
+    board->status.captured_count = 30;
+
+    for (int i = 0; i < 20; i++) {
+        Piece *captured_piece = malloc(sizeof(Piece)); // Asigna memoria para la pieza capturada
+        captured_piece->type = PAWN;
+        captured_piece->color = WHITE;
+        board->status.captured_pieces[i] = captured_piece; // Guarda la pieza en el arreglo de capturadas
+    }
+
+    for (int i = 20; i < 30; i++) {
+        Piece *captured_piece = malloc(sizeof(Piece)); // Asigna memoria para la pieza capturada
+        captured_piece->type = PAWN;
+        captured_piece->color = BLACK;
+        board->status.captured_pieces[i] = captured_piece; // Guarda la pieza en el arreglo de capturadas
+    }
 
     const char custom_board[BOARD_SIZE][BOARD_SIZE] = {
         {'-', '-', '-', '-', '-', '-', '-', '-'},
@@ -204,3 +163,70 @@ void initialize_custom_board(ChessBoard* board) {
         }
     }
 }
+
+
+// TODO: sacar el printeo a scr/print
+void print_piece(Piece *p, int use_unicode) {
+    if (p == NULL) {
+        printf("   ");  // Casilla vacía
+        return;
+    }
+
+    char *text_color = (p->color == WHITE) ? WHITE_COLOR : BLACK_COLOR;
+
+    if (use_unicode) {
+        printf("%s %s " RESET, text_color, PIECE_UNICODE[p->color][p->type]);
+    } else {
+        printf("%s %c " RESET, text_color, PIECE_ASCII[p->type]);
+    }
+}
+
+void print_captured_pieces(ChessBoard* board, int use_unicode) {
+    printf("\nPiezas capturadas:\n");
+    
+    int count = 0; // Contador para controlar el ancho
+
+    for (int i = 0; i < board->status.captured_count; i++) {
+        Piece *cp = board->status.captured_pieces[i];
+        if (cp != NULL) {
+            char *text_color = (cp->color == WHITE) ? WHITE_COLOR : BLACK_COLOR;
+
+            if (use_unicode) {
+                printf("%s%s " RESET, text_color, PIECE_UNICODE[cp->color][cp->type]);
+            } else {
+                printf("%s%c " RESET, text_color, PIECE_ASCII[cp->type]);
+            }
+
+            count++;
+
+            // 🔹 Si se imprimieron 10 piezas, saltar a la siguiente línea
+            if (count % 10 == 0) {
+                printf("\n");
+            }
+        }
+    }
+    
+    printf("\n");  // Asegurar que la última línea termine bien
+}
+
+// TODO: hacer que se muestren las capturadas al lado del tablero
+void print_board(ChessBoard* board, int use_unicode) {
+    // Printeo del tablero
+    printf("\n   a  b  c  d  e  f  g  h\n");
+    for (int row = 0; row < BOARD_SIZE; row++) {
+        printf("%d ", 8 - row);
+        for (int col = 0; col < BOARD_SIZE; col++) {
+            // Alternar colores de fondo según la casilla
+            char *bg_color = ((row + col) % 2 == 0) ? BG_LIGHT : BG_DARK;
+            
+            printf("%s", bg_color); // Aplicar color de fondo
+            print_piece(board->squares[row][col], use_unicode);
+            printf(RESET);
+        }
+        printf("\n");
+    }
+    printf("\n");
+
+    print_captured_pieces(board, use_unicode);
+}
+

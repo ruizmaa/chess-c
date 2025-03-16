@@ -7,6 +7,7 @@ int is_valid_move(const ChessBoard* board, const int from_row, const int from_co
 
     if (!piece) return 1;
 
+    //TODO: terminar los algoritmos de validacion
     switch (piece->type) {
         case PAWN:
             return is_valid_pawn_move(board, from_row, from_col, to_row, to_col);
