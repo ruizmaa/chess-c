@@ -77,6 +77,8 @@ void print_board(ChessBoard* board, int use_unicode) {
     printf("\n   a  b  c  d  e  f  g  h\n");
     
     for (int row = 0; row < BOARD_SIZE; row++) {
+
+        // Printeo del tablero
         printf("%d ", 8 - row);
         for (int col = 0; col < BOARD_SIZE; col++) {
             // Alternar colores de fondo según la casilla
@@ -97,11 +99,43 @@ void print_board(ChessBoard* board, int use_unicode) {
                 printf("%s   " RESET, bg_color); // Casilla vacía con fondo alterno
             }
         }
+
+        // Printeo de piezas capturadas
+        if ((BOARD_SIZE - row - 1) < board->status.captured_count) {
+            Piece *captured_piece = board->status.captured_pieces[BOARD_SIZE - row - 1];
+            char *text_color = (captured_piece->color == WHITE) ? WHITE_COLOR : BLACK_COLOR;
+            
+            // Piezas negras capturadas (colocarlas junto a las blancas)
+            if (captured_piece->color == BLACK) {
+                if (use_unicode) {
+                    printf("   %s%s " RESET, text_color, PIECE_UNICODE[captured_piece->color][captured_piece->type]);
+                } else {
+                    printf("   %s%c " RESET, text_color, PIECE_ASCII[captured_piece->type]);
+                }
+            }
+        }
+        if (row < board->status.captured_count) {
+            Piece *captured_piece = board->status.captured_pieces[row];
+            char *text_color = (captured_piece->color == WHITE) ? WHITE_COLOR : BLACK_COLOR;
+
+            // Piezas blancas capturadas (colocarlas junto a las negras)
+            if (captured_piece->color == WHITE) {
+                if (use_unicode) {
+                    printf("   %s%s " RESET, text_color, PIECE_UNICODE[captured_piece->color][captured_piece->type]);
+                } else {
+                    printf("   %s%c " RESET, text_color, PIECE_ASCII[captured_piece->type]);
+                }
+            }
+        }
+
         printf("\n");
     }
 }
 
 void free_board(ChessBoard* board) {
+    if (!board) return;
+
+    // LIBERA TABLERO
     for (int row = 0; row < BOARD_SIZE; row++) {
         for (int col = 0; col < BOARD_SIZE; col++) {
             if (board->squares[row][col] != NULL) {
@@ -110,6 +144,19 @@ void free_board(ChessBoard* board) {
             }
         }
     }
+
+    // LIBERA FICHAS CAPTURADAS
+    for (int i = 0; i < board->status.captured_count; i++) {
+        if (board->status.captured_pieces[i] != NULL) {
+            free(board->status.captured_pieces[i]);  // Liberar la memoria de la pieza capturada
+            board->status.captured_pieces[i] = NULL; // Evitar accesos inválidos
+        }
+    }
+    
+    // Reiniciar el contador de piezas capturadas
+    board->status.captured_count = 0;
+
+    free(board);
 }
 
 void initialize_custom_board(ChessBoard* board) {
