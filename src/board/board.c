@@ -20,8 +20,18 @@ void place_piece(ChessBoard* board, int row, int col, PieceType type, PieceColor
     board->squares[row][col]->color = color;
 }
 
+void initialize_game_status(ChessBoard* board) {
+    board->status.captured_count = 0;
+    board->status.current_turn = WHITE;
+    board->status.move_count = 0;
+    board->status.check = 0;
+}
+
 void initialize_board (ChessBoard* board){
-    //CREA EL TABLERO VACIO
+    // INICIALIZA GAME STATUS
+    initialize_game_status(board);
+
+    // CREA EL TABLERO VACIO
     for (int row = 0; row < BOARD_SIZE; row++)
     {
        for (int col = 0; col < BOARD_SIZE; col++){
@@ -29,14 +39,14 @@ void initialize_board (ChessBoard* board){
        }
     }
 
-    //RELLENA EL TABLERO CON PIEZAS
+    // RELLENA EL TABLERO CON PIEZAS
         //Peones
     for (int col = 0; col < BOARD_SIZE; col++) {
         place_piece(board, 6, col, PAWN, WHITE);  // Peones blancos
         place_piece(board, 1, col, PAWN, BLACK);  // Peones negros
     }
 
-        //Torres, caballos y alfiles
+        // Torres, caballos y alfiles
     const int piece_positions[3][2] = {
         {0, 7}, // Torres
         {1, 6}, // Caballos
@@ -54,11 +64,11 @@ void initialize_board (ChessBoard* board){
         }
     }
 
-        //Reina
+        // Reina
     place_piece(board, 7, 3, QUEEN, WHITE);  // Reina blanca (fila 7, columna 3)
     place_piece(board, 0, 3, QUEEN, BLACK);  // Reina negra (fila 0, columna 3)
 
-        //Rey
+        // Rey
     place_piece(board, 7, 4, KING, WHITE);  // Rey blanco (fila 7, columna 4)
     place_piece(board, 0, 4, KING, BLACK);  // Rey negro (fila 0, columna 4)
 }
@@ -103,6 +113,9 @@ void free_board(ChessBoard* board) {
 }
 
 void initialize_custom_board(ChessBoard* board) {
+    // INICIALIZA GAME STATUS
+    initialize_game_status(board);
+
     const char custom_board[BOARD_SIZE][BOARD_SIZE] = {
         {'-', '-', '-', '-', '-', '-', '-', '-'},
         {'-', '-', '-', '-', '-', '-', '-', '-'},

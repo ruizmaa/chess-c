@@ -8,15 +8,9 @@ int main() {
     // initialize_board(&board);
 
     initialize_custom_board(&board);
-    // Turno 0
-    PieceColor current_turn = WHITE;
 
     while (1) {
-        print_board(&board, 1);
-        play_turn(&board, current_turn);
-
-        // Cambiar de turno
-        current_turn = (current_turn == WHITE) ? BLACK : WHITE;
+        play_turn(&board);
     }
 
     return 0;

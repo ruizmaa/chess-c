@@ -2,6 +2,7 @@
 #define BOARD_H
 
 #define BOARD_SIZE 8
+#define MAX_CAPTURES 32
 
 //COLORES
 #define RESET  "\x1B[0m"
@@ -41,14 +42,26 @@ typedef struct {
 } Piece;
 
 typedef struct {
+    Piece* captured_pieces[MAX_CAPTURES];
+    int captured_count;
+    PieceColor current_turn;
+    int move_count;
+    int check;
+} GameStatus;
+
+typedef struct {
     Piece* squares [BOARD_SIZE][BOARD_SIZE];
+    GameStatus status;
 } ChessBoard;
 
 void place_piece(ChessBoard* board, int row, int col, PieceType type, PieceColor color);
+void initialize_game_status(ChessBoard* board);
 void initialize_board (ChessBoard* board);
 void initialize_custom_board (ChessBoard* board);
 void print_board(ChessBoard* board, int use_unicode);
 void free_board(ChessBoard* board);
+
+
 
 
 #endif
