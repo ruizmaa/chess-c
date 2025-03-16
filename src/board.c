@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "board.h"
 
-
 static const char* PIECE_UNICODE[2][6] = {
     { "♙", "♖", "♘", "♗", "♕", "♔" }, // Blancas
     { "♟", "♜", "♞", "♝", "♛", "♚" }  // Negras
@@ -10,13 +9,14 @@ static const char* PIECE_UNICODE[2][6] = {
 
 static const char PIECE_ASCII[6] = { 'P', 'R', 'N', 'B', 'Q', 'K' };
 
+
 void place_piece(ChessBoard* board, int row, int col, PieceType type, PieceColor color) {
     board->squares[row][col] = malloc(sizeof(Piece));
     board->squares[row][col]->type = type;
     board->squares[row][col]->color = color;
 }
 
-void inicialize_board (ChessBoard* board){
+void initialize_board (ChessBoard* board){
     //CREA EL TABLERO VACIO
     for (int raw = 0; raw < BOARD_SIZE; raw++)
     {
@@ -59,7 +59,6 @@ void inicialize_board (ChessBoard* board){
     place_piece(board, 0, 4, KING, BLACK);  // Rey negro (fila 0, columna 4)
 }
 
-
 void print_board(ChessBoard* board, int use_unicode) {
     printf("\n   a  b  c  d  e  f  g  h\n");
     
@@ -88,13 +87,55 @@ void print_board(ChessBoard* board, int use_unicode) {
     }
 }
 
-
 void free_board(ChessBoard* board) {
     for (int row = 0; row < BOARD_SIZE; row++) {
         for (int col = 0; col < BOARD_SIZE; col++) {
             if (board->squares[row][col] != NULL) {
                 free(board->squares[row][col]);  // Liberar memoria de la pieza
                 board->squares[row][col] = NULL; // Evitar accesos inválidos
+            }
+        }
+    }
+}
+
+void initialize_custom_board(ChessBoard* board) {
+    const char custom_board[BOARD_SIZE][BOARD_SIZE] = {
+        {'p', '-', 'p', 'p', 'p', 'p', 'p', 'p'},
+        {'r', 'n', 'b', 'q', '-', 'b', 'n', 'r'},
+        {'-', '-', '-', '-', '-', '-', '-', '-'},
+        {'-', '-', '-', '-', 'k', '-', '-', '-'},
+        {'-', '-', '-', '-', '-', '-', '-', '-'},
+        {'-', 'p', '-', '-', '-', '-', '-', '-'},
+        {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'},
+        {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'}
+    };
+
+    // Mapeo pizas
+    const struct { char symbol; PieceType type; } piece_map[] = {
+        {'P', PAWN}, {'R', ROOK}, {'N', KNIGHT}, {'B', BISHOP}, {'Q', QUEEN}, {'K', KING}
+    };
+
+    //CREA EL TABLERO VACIO
+    for (int raw = 0; raw < BOARD_SIZE; raw++)
+    {
+        for (int col = 0; col < BOARD_SIZE; col++){
+            board->squares[raw][col] = NULL;
+        }
+    }
+
+    //COLOCAR PIEZAS
+    for (int row = 0; row < BOARD_SIZE; row++) {
+        for (int col = 0; col < BOARD_SIZE; col++) {
+            char c = custom_board[row][col];
+            PieceColor color = (c >= 'A' && c <= 'Z') ? WHITE : BLACK;  // Mayúsculas = Blancas, Minúsculas = Negras
+            if (c == '-') continue;  // Espacio vacío
+
+            // Buscar el tipo de pieza
+            for (int i = 0; i < 6; i++) {
+                if (c == piece_map[i].symbol || c == (piece_map[i].symbol + ('a' - 'A'))) {
+                    place_piece(board, row, col, piece_map[i].type, color);
+                    break;
+                }
             }
         }
     }

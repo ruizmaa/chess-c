@@ -45,7 +45,8 @@ typedef struct {
 } ChessBoard;
 
 void place_piece(ChessBoard* board, int row, int col, PieceType type, PieceColor color);
-void inicialize_board (ChessBoard* board);
+void initialize_board (ChessBoard* board);
+void initialize_custom_board (ChessBoard* board);
 void print_board(ChessBoard* board, int use_unicode);
 void free_board(ChessBoard* board);
 
