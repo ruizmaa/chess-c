@@ -4,6 +4,7 @@
 #include "game.h"
 #include "board.h"
 #include "move.h"
+#include "terminal.h"
 
 
 // Manejar el turno del jugador

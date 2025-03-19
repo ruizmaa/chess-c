@@ -2,7 +2,7 @@
 CC = gcc
 
 # Flags de compilación
-CFLAGS = -Wall -Wextra -Werror -I src -I src/board -I src/game -I src/input -I src/validate -I src/move
+CFLAGS = -Wall -Wextra -Werror -I src -I src/board -I src/display -I src/game -I src/input -I src/validate -I src/move
 
 # Nombre del ejecutable
 EXEC = chess
