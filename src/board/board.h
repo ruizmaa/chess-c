@@ -47,6 +47,7 @@ typedef struct {
 void place_piece(ChessBoard* board, int row, int col, PieceType type, PieceColor color);
 void initialize_game_status(ChessBoard* board);
 void initialize_board (ChessBoard* board);
+//TODO: revisar que se aplique el free a todo ChessBoard en free_board()
 void free_board(ChessBoard* board);
 void initialize_custom_board(ChessBoard* board);
 
