@@ -50,5 +50,6 @@ void initialize_board (ChessBoard* board);
 //TODO: revisar que se aplique el free a todo ChessBoard en free_board()
 void free_board(ChessBoard* board);
 void initialize_custom_board(ChessBoard* board);
+void load_board_from_file(const char *filename, char custom_board[BOARD_SIZE][BOARD_SIZE]);
 
 #endif

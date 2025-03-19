@@ -156,3 +156,21 @@ void initialize_custom_board(ChessBoard* board) {
         }
     }
 }
+
+void load_board_from_file(const char *filename, char custom_board[BOARD_SIZE][BOARD_SIZE]) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("Error al abrir el archivo");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int row = 0; row < BOARD_SIZE; row++) {
+        if (fgets(custom_board[row], BOARD_SIZE + 2, file) == NULL) { // +2 para \n y \0
+            perror("Error al leer el archivo");
+            fclose(file);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    fclose(file);
+}
