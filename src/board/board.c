@@ -26,7 +26,8 @@ void initialize_game_status(ChessBoard* board) {
     board->status.captured_count = 0;
     board->status.current_turn = WHITE;
     board->status.move_count = 0;
-    board->status.check = 0;
+    board->status.passant_target_row = -1;
+    board->status.passant_target_col = -1;
 }
 
 void initialize_board (ChessBoard* board){
@@ -127,7 +128,7 @@ void initialize_custom_board(ChessBoard* board) {
         {'-', '-', '-', '-', '-', '-', '-', '-'},
         {'-', '-', '-', '-', '-', '-', '-', '-'},
         {'-', '-', '-', '-', '-', '-', '-', '-'},
-        {'R', '-', '-', '-', '-', '-', '-', '-'},
+        {'R', '-', 'r', '-', 'b', '-', '-', '-'},
         {'-', '-', '-', '-', '-', '-', '-', '-'},
         {'-', '-', '-', '-', '-', '-', '-', '-'},
         {'R', '-', 'q', '-', '-', '-', '-', '-'}

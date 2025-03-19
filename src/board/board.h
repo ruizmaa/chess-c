@@ -42,11 +42,17 @@ typedef struct {
 } Piece;
 
 typedef struct {
+    // Piezas capturadas
     Piece* captured_pieces[MAX_CAPTURES];
     int captured_count;
+
+    // Turno y n movimientos
     PieceColor current_turn;
     int move_count;
-    int check;
+
+    // Captura al paso
+    int passant_target_row;   
+    int passant_target_col; 
 } GameStatus;
 
 typedef struct {
@@ -54,13 +60,15 @@ typedef struct {
     GameStatus status;
 } ChessBoard;
 
+
+//TODO: revisar los cons
 void place_piece(ChessBoard* board, int row, int col, PieceType type, PieceColor color);
 void initialize_game_status(ChessBoard* board);
 void initialize_board (ChessBoard* board);
-void initialize_custom_board (ChessBoard* board);
-void print_board(ChessBoard* board, int use_unicode);
 void free_board(ChessBoard* board);
+void initialize_custom_board(ChessBoard* board);
 void print_piece(Piece *p, int use_unicode);
 void print_captured_pieces(ChessBoard* board, int use_unicode);
+void print_board(ChessBoard* board, int use_unicode);
 
 #endif
