@@ -7,7 +7,7 @@ int main() {
     ChessBoard board;
     //initialize_board(&board);
 
-    initialize_custom_board(&board);
+    initialize_custom_board_from_file(&board, "src/tests/rook.txt");
 
     while (1) {
         play_turn(&board);

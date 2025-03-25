@@ -1,8 +1,49 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 #include "board.h"
 
-//TOD: revisar que parametros son const
+//TODO: revisar que parametros son const
+
+int piece_from_char(char c, PieceType* type, PieceColor* color) {
+    if (c == '-' || c == '\n') return 0;
+
+    *color = isupper(c) ? WHITE : BLACK;
+    char upper = toupper(c);
+
+    // Mapeo pizas
+    const struct { char symbol; PieceType type; } piece_map[] = {
+        {'P', PAWN}, {'R', ROOK}, {'N', KNIGHT}, {'B', BISHOP}, {'Q', QUEEN}, {'K', KING}
+    };
+
+    for (size_t i = 0; i < sizeof(piece_map) / sizeof(piece_map[0]); i++) {
+        if (piece_map[i].symbol == upper) {
+            *type = piece_map[i].type;
+            return 1;
+        }
+    }
+    return 0; // No encontrado
+}
+
+void initialize_game_status(ChessBoard* board) {
+    board->status.captured_count = 0;
+    board->status.current_turn = WHITE;
+    board->status.move_count = 0;
+    board->status.passant_target_row = -1;
+    board->status.passant_target_col = -1;
+}
+
+void reset_board(ChessBoard* board) {
+    initialize_game_status(board);
+
+    // Inicializa el tablero vacío
+    for (int row = 0; row < BOARD_SIZE; row++) {
+        for (int col = 0; col < BOARD_SIZE; col++) {
+            board->squares[row][col] = NULL;
+        }
+    }
+}
 
 void place_piece(ChessBoard* board, int row, int col, PieceType type, PieceColor color) {
 
@@ -14,34 +55,18 @@ void place_piece(ChessBoard* board, int row, int col, PieceType type, PieceColor
     board->squares[row][col]->color = color;
 }
 
-void initialize_game_status(ChessBoard* board) {
-    board->status.captured_count = 0;
-    board->status.current_turn = WHITE;
-    board->status.move_count = 0;
-    board->status.passant_target_row = -1;
-    board->status.passant_target_col = -1;
-}
-
-void initialize_board (ChessBoard* board){
-    // INICIALIZA GAME STATUS
-    initialize_game_status(board);
-
-    // CREA EL TABLERO VACIO
-    for (int row = 0; row < BOARD_SIZE; row++)
-    {
-       for (int col = 0; col < BOARD_SIZE; col++){
-            board->squares[row][col] = NULL;
-       }
-    }
+void initialize_board (ChessBoard* board) {
+    // Crea tablero de 0
+    reset_board(board);
 
     // RELLENA EL TABLERO CON PIEZAS
-        //Peones
+    //Peones
     for (int col = 0; col < BOARD_SIZE; col++) {
         place_piece(board, 6, col, PAWN, WHITE);  // Peones blancos
         place_piece(board, 1, col, PAWN, BLACK);  // Peones negros
     }
 
-        // Torres, caballos y alfiles
+    // Torres, caballos y alfiles
     const int piece_positions[3][2] = {
         {0, 7}, // Torres
         {1, 6}, // Caballos
@@ -59,13 +84,44 @@ void initialize_board (ChessBoard* board){
         }
     }
 
-        // Reina
+    // Reina
     place_piece(board, 7, 3, QUEEN, WHITE);  // Reina blanca (fila 7, columna 3)
     place_piece(board, 0, 3, QUEEN, BLACK);  // Reina negra (fila 0, columna 3)
 
-        // Rey
+    // Rey
     place_piece(board, 7, 4, KING, WHITE);  // Rey blanco (fila 7, columna 4)
     place_piece(board, 0, 4, KING, BLACK);  // Rey negro (fila 0, columna 4)
+}
+
+void initialize_custom_board_from_file(ChessBoard* board, const char *filename) {
+    FILE* file = fopen(filename, "r");
+    if (!file) {
+        fprintf(stderr, "Error: No se pudo abrir el archivo %s\n", filename);
+        return;
+    }
+
+    reset_board(board);
+
+    char line[BOARD_SIZE + 2];  // +2 para '\n' y '\0'
+    int row = 0;
+
+    while (fgets(line, sizeof(line), file) && row < BOARD_SIZE) {
+        for (int col = 0; col < BOARD_SIZE && line[col] != '\n' && line[col] != '\0'; col++) {
+            PieceType type;
+            PieceColor color;
+    
+            if (!piece_from_char(line[col], &type, &color)) {
+                if (line[col] != '-') {
+                    fprintf(stderr, "Caracter inválido '%c' en fila %d, columna %d\n", line[col], row, col);
+                }
+                continue; // Casilla vacía o carácter inválido
+            }
+    
+            place_piece(board, row, col, type, color);
+        }
+        row++;
+    }
+    fclose(file);
 }
 
 void free_board(ChessBoard* board) {
@@ -93,84 +149,4 @@ void free_board(ChessBoard* board) {
     board->status.captured_count = 0;
 
     free(board);
-}
-
-void initialize_custom_board(ChessBoard* board) {
-    // INICIALIZA GAME STATUS
-    initialize_game_status(board);
-
-    board->status.captured_count = 30;
-
-    for (int i = 0; i < 20; i++) {
-        Piece *captured_piece = malloc(sizeof(Piece)); // Asigna memoria para la pieza capturada
-        captured_piece->type = PAWN;
-        captured_piece->color = WHITE;
-        board->status.captured_pieces[i] = captured_piece; // Guarda la pieza en el arreglo de capturadas
-    }
-
-    for (int i = 20; i < 30; i++) {
-        Piece *captured_piece = malloc(sizeof(Piece)); // Asigna memoria para la pieza capturada
-        captured_piece->type = PAWN;
-        captured_piece->color = BLACK;
-        board->status.captured_pieces[i] = captured_piece; // Guarda la pieza en el arreglo de capturadas
-    }
-
-    const char custom_board[BOARD_SIZE][BOARD_SIZE] = {
-        {'-', '-', '-', '-', '-', '-', '-', '-'},
-        {'-', '-', '-', '-', '-', '-', '-', '-'},
-        {'-', '-', '-', '-', '-', '-', '-', '-'},
-        {'-', '-', '-', '-', '-', '-', '-', '-'},
-        {'R', '-', 'r', '-', 'b', '-', '-', '-'},
-        {'-', '-', '-', '-', '-', '-', '-', '-'},
-        {'-', '-', '-', '-', '-', '-', '-', '-'},
-        {'R', '-', 'q', '-', '-', '-', '-', '-'}
-    };
-
-    // Mapeo pizas
-    const struct { char symbol; PieceType type; } piece_map[] = {
-        {'P', PAWN}, {'R', ROOK}, {'N', KNIGHT}, {'B', BISHOP}, {'Q', QUEEN}, {'K', KING}
-    };
-
-    //CREA EL TABLERO VACIO
-    for (int row = 0; row < BOARD_SIZE; row++)
-    {
-        for (int col = 0; col < BOARD_SIZE; col++){
-            board->squares[row][col] = NULL;
-        }
-    }
-
-    //COLOCAR PIEZAS
-    for (int row = 0; row < BOARD_SIZE; row++) {
-        for (int col = 0; col < BOARD_SIZE; col++) {
-            char c = custom_board[row][col];
-            PieceColor color = (c >= 'A' && c <= 'Z') ? WHITE : BLACK;  // Mayúsculas = Blancas, Minúsculas = Negras
-            if (c == '-') continue;  // Espacio vacío
-
-            // Buscar el tipo de pieza
-            for (int i = 0; i < 6; i++) {
-                if (c == piece_map[i].symbol || c == (piece_map[i].symbol + ('a' - 'A'))) {
-                    place_piece(board, row, col, piece_map[i].type, color);
-                    break;
-                }
-            }
-        }
-    }
-}
-
-void load_board_from_file(const char *filename, char custom_board[BOARD_SIZE][BOARD_SIZE]) {
-    FILE *file = fopen(filename, "r");
-    if (!file) {
-        perror("Error al abrir el archivo");
-        exit(EXIT_FAILURE);
-    }
-
-    for (int row = 0; row < BOARD_SIZE; row++) {
-        if (fgets(custom_board[row], BOARD_SIZE + 2, file) == NULL) { // +2 para \n y \0
-            perror("Error al leer el archivo");
-            fclose(file);
-            exit(EXIT_FAILURE);
-        }
-    }
-
-    fclose(file);
 }
