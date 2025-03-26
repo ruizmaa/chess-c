@@ -1,0 +1,8 @@
+BasedOnStyle: WebKit
+IndentWidth: 4         # 4 espacios para indentación
+TabWidth: 4            # Tabuladores equivalen a 4 espacios
+UseTab: Never          # No usar tabs, solo espacios
+BreakBeforeBraces: Attach  # Corchetes en la misma línea
+AllowShortIfStatementsOnASingleLine: false  # Forzar sangría en if/else
+AlwaysBreakAfterReturnType: None            # Compactar funciones
+SpaceBeforeParens: ControlStatements        # Espacio solo en if/while/etc.
