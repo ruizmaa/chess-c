@@ -18,7 +18,8 @@
           "*.h": "c"
         },
         "editor.formatOnSave": true,
-        "clang-format.style": "WebKit"
+        "clang-format.style": "file",
+        "clang-format.executable": "/usr/bin/clang-format"
       }
     }
   }

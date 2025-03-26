@@ -34,4 +34,8 @@ clean:
 # Recompilar desde cero
 re: clean all
 
-.PHONY: all clean re
+# Formatear todos los archivos .c y .h en src/
+format:
+	find src -name "*.c" -o -name "*.h" | xargs clang-format -i
+
+.PHONY: all clean re format
