@@ -1,10 +1,25 @@
 {
-    "name": "C Development",
-    "image": "gcc:latest",
-    "extensions": ["ms-vscode.cpptools"],
-    "settings": {
-      "terminal.integrated.defaultProfile.linux": "bash"
-    },
-    "postCreateCommand": "apt update && apt upgrade -y && apt install -y clang-format"
+  "name": "C Development",
+  "image": "gcc:latest",
+  "postCreateCommand": "apt update && apt upgrade -y && apt install -y clang-format",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "xaver.clang-format"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "editor.defaultFormatter": "xaver.clang-format",
+        "[c]": {
+          "editor.defaultFormatter": "xaver.clang-format"
+        },
+        "files.associations": {
+          "*.h": "c"
+        },
+        "editor.formatOnSave": true,
+        "clang-format.style": "WebKit"
+      }
+    }
   }
-  
+}
