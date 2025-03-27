@@ -7,12 +7,15 @@
       "extensions": [
         "ms-vscode.cpptools",
         "xaver.clang-format",
-        "codeium.chatPanelView"
+        "Codeium.codeium"
       ],
       "settings": {
         "terminal.integrated.defaultProfile.linux": "bash",
         "editor.defaultFormatter": "xaver.clang-format",
         "[c]": {
+          "editor.defaultFormatter": "xaver.clang-format"
+        },
+        "[cpp]": {
           "editor.defaultFormatter": "xaver.clang-format"
         },
         "files.associations": {
