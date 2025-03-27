@@ -3,7 +3,7 @@
 
 #include "board.h"
 
-void play_turn(ChessBoard* board);
-void change_turn (ChessBoard* board);
+void play_turn(ChessBoard *board);
+void change_turn(ChessBoard *board);
 
 #endif

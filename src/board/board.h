@@ -1,31 +1,21 @@
 #ifndef BOARD_H
 #define BOARD_H
 
-#define BOARD_SIZE 8
+#define BOARD_SIZE   8
 #define MAX_CAPTURES 32
 
-typedef enum {
-    PAWN,
-    ROOK,
-    KNIGHT,
-    BISHOP,
-    QUEEN,
-    KING
-} PieceType;
+typedef enum { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING } PieceType;
 
-typedef enum {
-    WHITE,
-    BLACK
-} PieceColor;
+typedef enum { WHITE, BLACK } PieceColor;
 
 typedef struct {
     PieceType type;
-    PieceColor color; 
+    PieceColor color;
 } Piece;
 
 typedef struct {
     // Piezas capturadas
-    Piece* captured_pieces[MAX_CAPTURES];
+    Piece *captured_pieces[MAX_CAPTURES];
     int captured_count;
 
     // Turno y n movimientos
@@ -33,23 +23,23 @@ typedef struct {
     int move_count;
 
     // Captura al paso
-    int passant_target_row;   
-    int passant_target_col; 
+    int passant_target_row;
+    int passant_target_col;
 } GameStatus;
 
 typedef struct {
-    Piece* squares [BOARD_SIZE][BOARD_SIZE];
+    Piece *squares[BOARD_SIZE][BOARD_SIZE];
     GameStatus status;
 } ChessBoard;
 
-//TODO: revisar los cons
-int piece_from_char(char c, PieceType* type, PieceColor* color);
-void initialize_game_status(ChessBoard* board);
-void reset_board(ChessBoard* board);
-void place_piece(ChessBoard* board, int row, int col, PieceType type, PieceColor color);
-void initialize_board (ChessBoard* board);
-void initialize_custom_board_from_file(ChessBoard* board, const char *filename);
-//TODO: revisar que se aplique el free a todo ChessBoard en free_board()
-void free_board(ChessBoard* board);
+// TODO: revisar los cons
+int piece_from_char(char c, PieceType *type, PieceColor *color);
+void initialize_game_status(ChessBoard *board);
+void reset_board(ChessBoard *board);
+void place_piece(ChessBoard *board, int row, int col, PieceType type, PieceColor color);
+void initialize_board(ChessBoard *board);
+void initialize_custom_board_from_file(ChessBoard *board, const char *filename);
+// TODO: revisar que se aplique el free a todo ChessBoard en free_board()
+void free_board(ChessBoard *board);
 
 #endif

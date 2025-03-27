@@ -6,7 +6,8 @@
     "vscode": {
       "extensions": [
         "ms-vscode.cpptools",
-        "xaver.clang-format"
+        "xaver.clang-format",
+        "codeium.chatPanelView"
       ],
       "settings": {
         "terminal.integrated.defaultProfile.linux": "bash",

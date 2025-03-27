@@ -5,8 +5,8 @@
 
 // Convierte input usuario  en coordenadas: ("a2") -> (0, 1)
 void get_coordinates(const char *input, int *row, int *col) {
-    *row = 8 - (input[1] - '0');  // Convierte '2' en 6, '4' en 4, etc.
-    *col = input[0] - 'a';  // Convierte 'e' en 4, 'd' en 3, etc.
+    *row = 8 - (input[1] - '0'); // Convierte '2' en 6, '4' en 4, etc.
+    *col = input[0] - 'a';       // Convierte 'e' en 4, 'd' en 3, etc.
 }
 
 // Pide al usuario unas coordenadas y comprueba con is_valid_input()

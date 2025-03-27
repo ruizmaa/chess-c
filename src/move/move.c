@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 // Función para mover una pieza
-int move_piece(ChessBoard* board, const int from_row, const int from_col, const int to_row, const int to_col) {
+int move_piece(ChessBoard *board, const int from_row, const int from_col, const int to_row, const int to_col) {
     Piece *piece = board->squares[from_row][from_col];
 
     // No hay pieza en la posicion de origen
@@ -42,17 +42,15 @@ int is_valid_from_piece(const Piece *selected_piece, const PieceColor current_tu
 }
 
 // Gestiona el comer fichas
-int take_piece(ChessBoard* board, Piece *piece, const int to_row, const int to_col) {
+int take_piece(ChessBoard *board, Piece *piece, const int to_row, const int to_col) {
     // Captura al paso
-    if (!take_piece_peasant(board, piece, to_row, to_col)) {
-        return 0;
-    }
+    if (!take_piece_peasant(board, piece, to_row, to_col)) { return 0; }
 
     // Captura normal
     Piece *captured_piece = board->squares[to_row][to_col];
     if (captured_piece) {
         if (board->status.captured_count < MAX_CAPTURES) {
-            board->status.captured_pieces[board->status.captured_count++] = captured_piece;  // Guardar pieza capturada
+            board->status.captured_pieces[board->status.captured_count++] = captured_piece; // Guardar pieza capturada
         } else {
             printf("Error: Se excedió el límite de piezas capturadas.\n");
             return 0;
@@ -61,11 +59,11 @@ int take_piece(ChessBoard* board, Piece *piece, const int to_row, const int to_c
     return 1;
 }
 
-int take_piece_peasant (ChessBoard *board, Piece *piece, const int to_row, const int to_col){
+int take_piece_peasant(ChessBoard *board, Piece *piece, const int to_row, const int to_col) {
     if (piece->type == PAWN && to_row == board->status.passant_target_row &&
         to_col == board->status.passant_target_col) {
-        
-        int captured_pawn_row = (piece->color == WHITE) ? to_row - 1 : to_row + 1;  // El peón enemigo está en la misma columna en la fila de origen
+        // El peón enemigo está en la misma columna en la fila de origen
+        int captured_pawn_row = (piece->color == WHITE) ? to_row - 1 : to_row + 1;
         Piece *passant_pawn = board->squares[captured_pawn_row][to_col];
 
         if (passant_pawn && passant_pawn->type == PAWN && passant_pawn->color != piece->color) {
@@ -82,7 +80,7 @@ int take_piece_peasant (ChessBoard *board, Piece *piece, const int to_row, const
 }
 
 // Gestiona el control de poder comer al paso
-void reset_peasant (ChessBoard* board, const Piece *piece, const int from_row, const int from_col, const int to_row) {
+void reset_peasant(ChessBoard *board, const Piece *piece, const int from_row, const int from_col, const int to_row) {
     board->status.passant_target_row = -1;
     board->status.passant_target_col = -1;
 
