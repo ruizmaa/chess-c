@@ -12,21 +12,20 @@ void get_coordinates(const char *input, int *row, int *col) {
 // Pide al usuario unas coordenadas y comprueba con is_valid_input()
 void get_user_input(char *input) {
     while (1) {
-        scanf("%2s", input);
+        scanf("%4s", input);
 
-        if (!is_valid_input(input)) {
+        if (strlen(input) == 2 && is_valid_input(input)) {
+            break;
+        } else if (strlen(input) == 4 && is_valid_input(input) && is_valid_input(input + 2)) {
+            break;
+        } else {
             printf("Entrada inválida. Intenta de nuevo: ");
-            continue;
         }
-        break;
     }
 }
 
 // Asegura que el input sea bueno (eg: "a2" OK | "kasf" NO | "c9" NO)
 int is_valid_input(const char *input) {
-    // Verificar que la longitud sea exactamente 2
-    if (strlen(input) != 2) return 0;
-
     // Verificar que el primer carácter esté entre 'a' y 'h'
     if (input[0] < 'a' || input[0] > 'h') return 0;
 
