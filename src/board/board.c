@@ -31,8 +31,16 @@ void initialize_game_status(ChessBoard *board) {
     board->status.captured_count = 0;
     board->status.current_turn = WHITE;
     board->status.move_count = 0;
+
     board->status.passant_target_row = -1;
     board->status.passant_target_col = -1;
+
+    board->status.white_king_moved = 0;
+    board->status.black_king_moved = 0;
+    board->status.white_rook_kingside_moved = 0;
+    board->status.white_rook_queenside_moved = 0;
+    board->status.black_rook_kingside_moved = 0;
+    board->status.black_rook_queenside_moved = 0;
 }
 
 void reset_board(ChessBoard *board) {

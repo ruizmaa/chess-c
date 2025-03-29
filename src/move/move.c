@@ -22,6 +22,37 @@ int move_piece(ChessBoard *board, const int from_row, const int from_col, const 
     board->squares[to_row][to_col] = piece;
     board->squares[from_row][from_col] = NULL;
 
+    // Enroque: mover la torre correspondiente
+    if (piece->type == KING && abs(to_col - from_col) == 2) {
+        int rook_from_col = (to_col > from_col) ? 7 : 0; // Torre en flanco rey o reina
+        int rook_to_col = (to_col > from_col) ? to_col - 1 : to_col + 1;
+
+        Piece *rook = board->squares[to_row][rook_from_col];
+        board->squares[to_row][rook_from_col] = NULL;
+        board->squares[to_row][rook_to_col] = rook;
+    }
+
+    // Actualiza flags de enroque
+    if (piece->type == KING) {
+        if (piece->color == WHITE)
+            board->status.white_king_moved = 1;
+        else
+            board->status.black_king_moved = 1;
+    }
+    if (piece->type == ROOK) {
+        if (piece->color == WHITE) {
+            if (from_row == 7 && from_col == 0)
+                board->status.white_rook_queenside_moved = 1;
+            else if (from_row == 7 && from_col == 7)
+                board->status.white_rook_kingside_moved = 1;
+        } else {
+            if (from_row == 0 && from_col == 0)
+                board->status.black_rook_queenside_moved = 1;
+            else if (from_row == 0 && from_col == 7)
+                board->status.black_rook_kingside_moved = 1;
+        }
+    }
+
     // Gestionar si se habilita comer al paso
     reset_peasant(board, piece, from_row, from_col, to_row);
 

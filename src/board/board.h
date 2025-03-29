@@ -25,6 +25,14 @@ typedef struct {
     // Captura al paso
     int passant_target_row;
     int passant_target_col;
+
+    // Movimiento de rey y torres para enroque
+    int white_king_moved;
+    int black_king_moved;
+    int white_rook_kingside_moved;
+    int white_rook_queenside_moved;
+    int black_rook_kingside_moved;
+    int black_rook_queenside_moved;
 } GameStatus;
 
 typedef struct {
