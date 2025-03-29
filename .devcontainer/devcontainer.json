@@ -1,7 +1,7 @@
 {
   "name": "C Development",
   "image": "gcc:latest",
-  "postCreateCommand": "apt update && apt upgrade -y && apt install -y clang-format",
+  "postCreateCommand": "apt update && apt upgrade -y && apt install -y clang-format && apt-get install -y gdb",
   "customizations": {
     "vscode": {
       "extensions": [
