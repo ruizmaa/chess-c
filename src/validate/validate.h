@@ -21,5 +21,6 @@ int is_valid_castling_move(const ChessBoard *board, int from_row, int from_col, 
 int is_square_attacked(const ChessBoard *board, const int row, const int col, const PieceColor by_color);
 int would_cause_check(ChessBoard *board, const int from_row, const int from_col, const int to_row, int to_col,
                       const PieceColor color);
+void show_invalid_reason(const char *reason);
 
 #endif

@@ -1,7 +1,10 @@
 #include "validate.h"
+#include <stdio.h>
 #include <stdlib.h>
 
-// TOD: comprobar cons
+// TODO: comprobar cons
+
+// TODO: poner show_invalid_reason para mostrar errores
 
 // Return 1 cuando la casilla destino tiene pieza aliada
 int is_friendly_occupied(const PieceColor color_turn, const Piece *destination) {
@@ -14,9 +17,10 @@ int is_valid_move(const ChessBoard *board, const int from_row, const int from_co
 
     if (!piece) return 0;
 
-    if (is_friendly_occupied(piece->color, board->squares[to_row][to_col]))
+    if (is_friendly_occupied(piece->color, board->squares[to_row][to_col])) {
+        show_invalid_reason("No puedes moverte donde hay una pieza amiga. Intenta de nuevo.\n");
         return 0; // Hay una pieza amiga en el destino
-
+    }
     int valid = 0;
     // TODO: terminar los algoritmos de validacion
     switch (piece->type) {
@@ -258,4 +262,8 @@ int would_cause_check(ChessBoard *board, const int from_row, const int from_col,
     // Verificar si la casilla del rey está atacada
     PieceColor enemy_color = (color == WHITE) ? BLACK : WHITE;
     return is_square_attacked(board, king_row, king_col, enemy_color);
+}
+
+void show_invalid_reason(const char *reason) {
+    printf("Movimiento inválido: %s\n", reason);
 }
