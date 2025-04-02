@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int validation_silent = 0;
+
 // TODO: comprobar cons
 
 // Return 1 cuando la casilla destino tiene pieza aliada
@@ -23,7 +25,7 @@ int is_valid_move(const ChessBoard *board, const int from_row, const int from_co
         return 0; // Hay una pieza amiga en el destino
     }
     int valid = 0;
-    // TODO: terminar los algoritmos de validacion
+    // TODO: terminar los algoritmos de validacion (captura al paso)
     switch (piece->type) {
     case PAWN:
         valid = is_valid_pawn_move(board, from_row, from_col, to_row, to_col);
@@ -51,14 +53,16 @@ int is_valid_move(const ChessBoard *board, const int from_row, const int from_co
     }
 
     if (!valid) {
-        show_invalid_reason("El movimiento no es válido para esa pieza");
+        printf("Intételo de nuevo");
         return 0;
     } // No es movimiento valido
 
+    SILENT_BLOCK_START
     if (would_cause_check((ChessBoard *)board, from_row, from_col, to_row, to_col, piece->color)) {
         show_invalid_reason("Este movimiento pondría a tu rey en jaque");
         return 0;
     }
+    SILENT_BLOCK_END
 
     return 1; // Everything ok
 }
@@ -367,5 +371,5 @@ int would_cause_check(ChessBoard *board, const int from_row, const int from_col,
 }
 
 void show_invalid_reason(const char *reason) {
-    printf("Movimiento inválido: %s\n", reason);
+    if (!validation_silent) { printf("Movimiento inválido: %s\n", reason); }
 }

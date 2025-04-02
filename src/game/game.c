@@ -52,11 +52,7 @@ void play_turn(ChessBoard *board) {
             continue; // Validar que la coordenada sea válida (haya una pieza del jugador)
 
         // Muevo la ficha
-        if (move_piece(board, from_row, from_col, to_row, to_col)) {
-            change_turn(board);
-        } else {
-            printf("Movimiento inválido. Intenta de nuevo.\n");
-        }
+        if (move_piece(board, from_row, from_col, to_row, to_col)) { change_turn(board); }
     }
 }
 

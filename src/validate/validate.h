@@ -1,6 +1,10 @@
 #ifndef VALIDATE_H
 #define VALIDATE_H
 
+extern int validation_silent;
+#define SILENT_BLOCK_START validation_silent = 1;
+#define SILENT_BLOCK_END   validation_silent = 0;
+
 #include "board.h"
 
 int is_friendly_occupied(const PieceColor color_turn, const Piece *destination);
