@@ -1,6 +1,7 @@
 #include "validate.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 int validation_silent = 0;
 
@@ -57,12 +58,15 @@ int is_valid_move(const ChessBoard *board, const int from_row, const int from_co
         return 0;
     } // No es movimiento valido
 
+    int check;
     SILENT_BLOCK_START
-    if (would_cause_check((ChessBoard *)board, from_row, from_col, to_row, to_col, piece->color)) {
-        show_invalid_reason("Este movimiento pondría a tu rey en jaque");
+    check = would_cause_check((ChessBoard *)board, from_row, from_col, to_row, to_col, piece->color);
+    SILENT_BLOCK_END
+
+    if (check) {
+        show_invalid_reason("Movimiento que causa un check");
         return 0;
     }
-    SILENT_BLOCK_END
 
     return 1; // Everything ok
 }
@@ -337,37 +341,46 @@ int is_square_attacked(const ChessBoard *board, const int row, const int col, co
 
 int would_cause_check(ChessBoard *board, const int from_row, const int from_col, const int to_row, int to_col,
                       const PieceColor color) {
-    Piece *moving_piece = board->squares[from_row][from_col];
-    Piece *captured_piece = board->squares[to_row][to_col];
+    ChessBoard temp_board;
+    memcpy(&temp_board, board, sizeof(ChessBoard));
+
+    Piece *moving_piece = temp_board.squares[from_row][from_col];
 
     // Simular el movimiento
-    board->squares[to_row][to_col] = moving_piece;
-    board->squares[from_row][from_col] = NULL;
+    temp_board.squares[to_row][to_col] = moving_piece;
+    temp_board.squares[from_row][from_col] = NULL;
 
-    // Buscar la posición actual del rey después del movimiento
+    // Posición del rey (considera si se mueve)
     int king_row = -1, king_col = -1;
-    for (int r = 0; r < BOARD_SIZE; r++) {
-        for (int c = 0; c < BOARD_SIZE; c++) {
-            Piece *p = board->squares[r][c];
-            if (p && p->type == KING && p->color == color) {
-                king_row = r;
-                king_col = c;
-                break;
+    if (moving_piece->type == KING) {
+        king_row = to_row;
+        king_col = to_col;
+    } else {
+        for (int row = 0; row < BOARD_SIZE; row++) {
+            for (int col = 0; col < BOARD_SIZE; col++) {
+                Piece *piece = temp_board.squares[row][col];
+                if (piece && piece->type == KING && piece->color == color) {
+                    king_row = row;
+                    king_col = col;
+                    break;
+                }
             }
+            if (king_row != -1) break;
         }
-        if (king_row != -1) break;
     }
 
-    // Restaurar el estado original
-    board->squares[from_row][from_col] = moving_piece;
-    board->squares[to_row][to_col] = captured_piece;
+    if (king_row == -1 || king_col == -1) {
+        show_invalid_reason("Error grave: rey no encontrado");
+        return 1;
+    }
 
-    // No se encontró el rey, error grave
-    // TODO: quitar esto if (king_row == -1 || king_col == -1) return 1;
-
-    // Verificar si la casilla del rey está atacada
     PieceColor enemy_color = (color == WHITE) ? BLACK : WHITE;
-    return is_square_attacked(board, king_row, king_col, enemy_color);
+    if (is_square_attacked(&temp_board, king_row, king_col, enemy_color)) {
+        show_invalid_reason("Este movimiento pondría a tu rey en jaque");
+        return 1;
+    }
+
+    return 0;
 }
 
 void show_invalid_reason(const char *reason) {
