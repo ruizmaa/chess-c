@@ -350,37 +350,33 @@ int would_cause_check(ChessBoard *board, const int from_row, const int from_col,
     temp_board.squares[to_row][to_col] = moving_piece;
     temp_board.squares[from_row][from_col] = NULL;
 
-    // Posición del rey (considera si se mueve)
+    // Usar is_in_check() directamente sobre el tablero simulado
+    return is_in_check(&temp_board, color);
+}
+
+int is_in_check(const ChessBoard *board, PieceColor color) {
     int king_row = -1, king_col = -1;
-    if (moving_piece->type == KING) {
-        king_row = to_row;
-        king_col = to_col;
-    } else {
-        for (int row = 0; row < BOARD_SIZE; row++) {
-            for (int col = 0; col < BOARD_SIZE; col++) {
-                Piece *piece = temp_board.squares[row][col];
-                if (piece && piece->type == KING && piece->color == color) {
-                    king_row = row;
-                    king_col = col;
-                    break;
-                }
+
+    // Buscar la posición del rey
+    for (int row = 0; row < BOARD_SIZE; row++) {
+        for (int col = 0; col < BOARD_SIZE; col++) {
+            Piece *p = board->squares[row][col];
+            if (p && p->type == KING && p->color == color) {
+                king_row = row;
+                king_col = col;
+                break;
             }
-            if (king_row != -1) break;
         }
+        if (king_row != -1) break;
     }
 
     if (king_row == -1 || king_col == -1) {
-        show_invalid_reason("Error grave: rey no encontrado");
+        fprintf(stderr, "Error: rey del color %s no encontrado en el tablero.\n", color == WHITE ? "blanco" : "negro");
         return 1;
     }
 
-    PieceColor enemy_color = (color == WHITE) ? BLACK : WHITE;
-    if (is_square_attacked(&temp_board, king_row, king_col, enemy_color)) {
-        show_invalid_reason("Este movimiento pondría a tu rey en jaque");
-        return 1;
-    }
-
-    return 0;
+    PieceColor enemy = (color == WHITE) ? BLACK : WHITE;
+    return is_square_attacked(board, king_row, king_col, enemy);
 }
 
 void show_invalid_reason(const char *reason) {
