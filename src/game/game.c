@@ -6,6 +6,7 @@
 #include "input.h"
 #include "move.h"
 #include "terminal.h"
+#include "validate.h"
 
 // Manejar el turno del jugador
 void play_turn(ChessBoard *board) {
@@ -24,6 +25,11 @@ void play_turn(ChessBoard *board) {
         turn_color = (board->status.current_turn == WHITE) ? WHITE_COLOR : BLACK_COLOR;
 
         print_board(board, 1);
+
+        // Verificar si el jugador esta en jaque
+        if (is_in_check(board, turn)) {
+            printf("%sEl rey %s está en jaque%s\n", turn_color, (turn == WHITE ? "blanco" : "negro"), RESET);
+        }
 
         // Printeo inicio del turno
         printf("%sTurno de las %s.%s\n", turn_color, turn == WHITE ? "blancas" : "negras", RESET);
