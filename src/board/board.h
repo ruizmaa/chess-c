@@ -47,7 +47,6 @@ void reset_board(ChessBoard *board);
 void place_piece(ChessBoard *board, int row, int col, PieceType type, PieceColor color);
 void initialize_board(ChessBoard *board);
 void initialize_custom_board_from_file(ChessBoard *board, const char *filename);
-// TODO: revisar que se aplique el free a todo ChessBoard en free_board()
 void free_board(ChessBoard *board);
 
 #endif
