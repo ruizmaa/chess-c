@@ -4,14 +4,15 @@
 
 int main() {
     // Creacion del tablero
-    ChessBoard board;
-    // initialize_board(&board);
+    ChessBoard *board = malloc(sizeof(ChessBoard));
 
-    initialize_custom_board_from_file(&board, "src/tests/castling/long_black_ok.txt");
+    // initialize_board(&board);
+    initialize_custom_board_from_file(&board, "src/tests/check.txt");
 
     while (1) {
         play_turn(&board);
     }
 
+    free_board(board);
     return 0;
 }
