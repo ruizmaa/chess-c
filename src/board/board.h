@@ -40,11 +40,10 @@ typedef struct {
     GameStatus status;
 } ChessBoard;
 
-// TODO: revisar los cons
-int piece_from_char(char c, PieceType *type, PieceColor *color);
+int piece_from_char(const char c, PieceType *type, PieceColor *color);
 void initialize_game_status(ChessBoard *board);
 void reset_board(ChessBoard *board);
-void place_piece(ChessBoard *board, int row, int col, PieceType type, PieceColor color);
+void place_piece(ChessBoard *board, const int row, const int col, const PieceType type, const PieceColor color);
 void initialize_board(ChessBoard *board);
 void initialize_custom_board_from_file(ChessBoard *board, const char *filename);
 void free_board(ChessBoard *board);

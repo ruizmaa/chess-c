@@ -4,9 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-// TODO: revisar que parametros son const
-
-int piece_from_char(char c, PieceType *type, PieceColor *color) {
+int piece_from_char(const char c, PieceType *type, PieceColor *color) {
     if (c == '-' || c == '\n') return 0;
 
     *color = isupper(c) ? WHITE : BLACK;
@@ -54,7 +52,7 @@ void reset_board(ChessBoard *board) {
     }
 }
 
-void place_piece(ChessBoard *board, int row, int col, PieceType type, PieceColor color) {
+void place_piece(ChessBoard *board, const int row, const int col, const PieceType type, const PieceColor color) {
 
     if ((board->squares[row][col] = malloc(sizeof(Piece))) == NULL) {
         fprintf(stderr, "Error: No se pudo asignar memoria para la pieza.\n");
