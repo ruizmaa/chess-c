@@ -74,8 +74,17 @@ int is_valid_from_piece(const Piece *selected_piece, const PieceColor current_tu
 
 // Gestiona el comer fichas
 int take_piece(ChessBoard *board, Piece *piece, const int to_row, const int to_col) {
+    // Debug para ver el objetivo de captura al paso
+    if (board->status.passant_target_row >= 0 && board->status.passant_target_col >= 0) {
+        printf("[DEBUG] Revisando captura al paso: destino %c%d - objetivo passant %c%d\n", 'a' + to_col, 8 - to_row,
+               'a' + board->status.passant_target_col, 8 - board->status.passant_target_row);
+    } else {
+        printf("[DEBUG] Revisando captura al paso: destino %c%d - sin objetivo passant válido\n", 'a' + to_col,
+               8 - to_row);
+    }
+
     // Captura al paso
-    if (!take_piece_peasant(board, piece, to_row, to_col)) { return 0; }
+    if (take_piece_peasant(board, piece, to_row, to_col)) { return 1; }
 
     // Captura normal
     Piece *captured_piece = board->squares[to_row][to_col];
@@ -94,30 +103,40 @@ int take_piece_peasant(ChessBoard *board, Piece *piece, const int to_row, const 
     if (piece->type == PAWN && to_row == board->status.passant_target_row &&
         to_col == board->status.passant_target_col) {
         // El peón enemigo está en la misma columna en la fila de origen
-        int captured_pawn_row = (piece->color == WHITE) ? to_row - 1 : to_row + 1;
+        int captured_pawn_row = (piece->color == WHITE) ? to_row + 1 : to_row - 1;
         Piece *passant_pawn = board->squares[captured_pawn_row][to_col];
 
         if (passant_pawn && passant_pawn->type == PAWN && passant_pawn->color != piece->color) {
             if (board->status.captured_count < MAX_CAPTURES) {
                 board->status.captured_pieces[board->status.captured_count++] = passant_pawn;
                 board->squares[captured_pawn_row][to_col] = NULL;
+
+                printf("[DEBUG]: Captura al paso realizada en %c%d\n", 'a' + to_col, 8 - to_row);
+                return 1;
             } else {
                 printf("Error: Se excedió el límite de piezas capturadas.\n");
                 return 0;
             }
         }
+        printf("[DEBUG] Intentando comer al paso: peón enemigo en %c%d\n", 'a' + to_col, 8 - captured_pawn_row);
+        return 0;
     }
-    return 1;
+    return 0;
 }
 
 // Gestiona el control de poder comer al paso
 void reset_peasant(ChessBoard *board, const Piece *piece, const int from_row, const int from_col, const int to_row) {
-    board->status.passant_target_row = -1;
-    board->status.passant_target_col = -1;
-
-    // Si un peón se movió dos casillas, guardar su posible captura al paso
-    if (piece->type == PAWN && abs(to_row - from_row) == 2) {
-        board->status.passant_target_row = (from_row + to_row) / 2;
-        board->status.passant_target_col = from_col;
+    // Por defecto, se borra solo si NO es un peón que se mueve dos
+    if (piece->type != PAWN || abs(to_row - from_row) != 2) {
+        board->status.passant_target_row = -1;
+        board->status.passant_target_col = -1;
+        return;
     }
+
+    // Movimiento válido de 2 casillas: permite captura al paso
+    board->status.passant_target_row = (from_row + to_row) / 2;
+    board->status.passant_target_col = from_col;
+
+    printf("[DEBUG] Se habilita captura al paso en %c%d\n", 'a' + board->status.passant_target_col,
+           8 - board->status.passant_target_row);
 }

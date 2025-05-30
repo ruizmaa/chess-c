@@ -97,8 +97,22 @@ int is_valid_pawn_move(const ChessBoard *board, const int from_row, const int fr
         }
     }
 
-    // Captura en diagonal
+    // Capturas
     if (to_row == from_row + direction && (to_col == from_col + 1 || to_col == from_col - 1)) {
+        // Captura al paso
+        if (board->status.passant_target_row == to_row && board->status.passant_target_col == to_col) {
+            int captured_row = (pawn_color == WHITE) ? to_row + 1 : to_row - 1;
+            Piece *enemy = board->squares[captured_row][to_col];
+
+            if (enemy != NULL && enemy->type == PAWN && enemy->color != pawn_color) {
+                return 1; // Movimiento válido al paso
+            } else {
+                show_invalid_reason("No hay un peón rival válido para capturar al paso");
+                return 0;
+            }
+        }
+
+        // Caputura en diagonal
         Piece *target = board->squares[to_row][to_col];
         if (target != NULL) {
             if (target->color != pawn_color) {
@@ -112,8 +126,6 @@ int is_valid_pawn_move(const ChessBoard *board, const int from_row, const int fr
             return 0;
         }
     }
-
-    // TODO: captura a paso
 
     show_invalid_reason("Movimiento de peón inválido");
     return 0; // Cualquier otro movimiento es inválido
